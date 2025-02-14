@@ -46,9 +46,9 @@ regd_users.post("/login", (req,res) => {
           req.session.authorization = {
               accessToken, username
           }
-          return res.status(200).send("User successfully logged in");
+          return res.status(200).send({message:"User successfully logged in"});
       } else {
-          return res.status(208).json({ message: "Invalid Login. Check username and password" });
+          return res.status(400).json({ message: "Invalid Login. Check username and password" });
       }
 });
 
@@ -65,6 +65,20 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   }
 });
 
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  //Write your code here
+  if(books[req.params.isbn]){
+    let user = req.session.authorization.username;
+    if(Object.keys(books[req.params.isbn].reviews).filter(key => key === user).length > 0){
+      delete books[req.params.isbn].reviews[user];
+      return res.status(200).json({message: "Review deleted successfully"});
+    }else{
+      return res.status(404).json({message: "Review not found"});
+    }
+  }else{
+    res.status(404).json({message: "Book not found"});
+  }
+});
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
 module.exports.users = users;

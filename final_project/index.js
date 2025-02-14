@@ -33,4 +33,6 @@ const PORT =5000;
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
+app.use((req,res)=>res.status(404).json({message:"Page not found"}));
+
 app.listen(PORT,()=>console.log("Server is running"));
